@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -66,6 +67,11 @@ public class SimpleControlPanel implements ActionListener, PacketListener{
         	relay.add(relayButtons[i]);
         	relays.add(relay);
         }
+        JButton allToggle = new JButton("All");
+        allToggle.addActionListener(this);
+    	JPanel relay = new JPanel(new GridLayout(2, 1));
+    	relay.add(allToggle,0);
+    	relays.add(relay);
         frame.getContentPane().add(relays);
 
         //Display the window.
@@ -93,6 +99,15 @@ public class SimpleControlPanel implements ActionListener, PacketListener{
 			int relayIndex = ((RelayButton)source).getRelayIndex();
 			Packet packet = new Packet(Cmd.TOGGLE);
 			packet.addRelay(relayIndex);
+			try {
+				send(packet);
+			} catch (SerialPortException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else if( source instanceof JButton ) {
+			Packet packet = new Packet( Cmd.TOGGLE );
+			packet.addAllRelays();
 			try {
 				send(packet);
 			} catch (SerialPortException e) {
